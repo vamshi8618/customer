@@ -224,7 +224,7 @@ def mark_items_takeaway(
     }
 
 ################################################################
-# Endpoint for setting up the billing status of the order
+# Endpoint for setting up the billing status of the order      #
 ################################################################
 
 @order_router.put("/set_billing_status/{order_id}/{status}")
@@ -248,3 +248,4 @@ def set_billing_status(order_id: str, status: str, user: dict = Depends(get_curr
         "order_id": order_id,
         "payment_status": status,
     }
+
