@@ -149,11 +149,19 @@ def modify_order_items(
 ):
     """
     Modify items within the 'orders' field of an existing order.
+    Access is restricted to the same tab user or users with admin, waiter, or billing privileges.
     """
     # Fetch the existing order
     order = orders_collection.find_one({"order_id": order_id})
     if not order:
         raise HTTPException(status_code=404, detail="Order not found.")
+    
+    # Check user privileges
+    if not (user["username"] == order.get("order_by", {}).get("username") or user["privilege"] in ["admin", "waiter", "billing"]):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Permission denied"
+        )
     
     # Extract modifications
     takeaway_items = modifications.get("takeaway_items", [])  # List of item IDs to mark as takeaway
