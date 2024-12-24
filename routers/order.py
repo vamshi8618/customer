@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from auth import get_current_user
+from fastapi import APIRouter, Depends, HTTPException, status, Body
+from router import get_current_user
 from pydantic import BaseModel, Field
 from typing import List, Optional
 from datetime import datetime
@@ -223,3 +223,28 @@ def mark_items_takeaway(
         "updated_orders": updated_orders,
     }
 
+################################################################
+# Endpoint for setting up the billing status of the order
+################################################################
+
+@order_router.put("/set_billing_status/{order_id}/{status}")
+def set_billing_status(order_id: str, status: str, user: dict = Depends(get_current_user)):
+    """
+    Set the billing status of an order to the specified status.
+    """
+    # Fetch the existing order
+    order = orders_collection.find_one({"order_id": order_id})
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found.")
+
+    # Update the order in the database
+    orders_collection.update_one(
+        {"order_id": order_id},
+        {"$set": {"payment_status": status}}
+    )
+
+    return {
+        "message": "Order billing status updated successfully.",
+        "order_id": order_id,
+        "payment_status": status,
+    }
