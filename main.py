@@ -1,7 +1,7 @@
 # main.py
 from fastapi import FastAPI
 from router import user_router
-from routers.order_router import order_router
+from routers.order import order_router
 from dotenv import load_dotenv
 
 # Load environment variables

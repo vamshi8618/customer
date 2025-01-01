@@ -45,18 +45,21 @@ class Order(BaseModel):
     order_by: Optional[dict] = None  # Added automatically based on user
     user_name: Optional[str] = None  # Added automatically based on user
 
-# CRUD Endpoints
-@order_router.post("/create", response_model=Order)
+# CRUD Endpoints@order_router.post("/create", response_model=Order)
 def create_order(order: Order, user: dict = Depends(get_current_user)):
     """
     Create a new order. Automatically assigns the logged-in user's username and role to 'order_by'.
     """
-    if orders_collection.find_one({"order_id": order.order_id}):
-        raise HTTPException(status_code=400, detail="Order ID already exists.")
-    
     order_dict = order.dict()
     order_dict["order_by"] = {"username": user["username"], "role": user["role"]}
-    orders_collection.insert_one(order_dict)
+    
+    # Insert the order into the database and retrieve the ID
+    result = orders_collection.insert_one(order_dict)
+    order_id = str(result.inserted_id)
+    
+    # Update the order dictionary with the ID
+    order_dict["order_id"] = order_id
+    
     return order_dict
 
 
