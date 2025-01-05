@@ -18,4 +18,4 @@ app.include_router(tab_router, prefix="/tabs", tags=["Tabs"])
 
 @app.get("/")
 def root():
-    return {"message": "Welcome to the Hotel Order Management System!"}
+    return {"message": "Welcome to Tab based Hotel Order Management System!"}

@@ -41,7 +41,7 @@ class OrderUpdate(BaseModel):
     updated_at: datetime = datetime.utcnow()
 
 
-# Endpoints
+# Endpoints 
 @cook_router.get("/list_pending_dishes", status_code=200)
 def list_pending_dishes(user: dict = Depends(get_current_user)):
     """
