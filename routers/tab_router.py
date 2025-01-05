@@ -7,9 +7,7 @@ from router import get_current_user
 import os
 
 # MongoDB connection (adjust as needed)
-client = MongoClient("mongodb://localhost:27017/")
-db = client.hotel_management
-tabs_collection = db.tab
+
 
 MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017/")
 DATABASE_NAME = os.getenv("DATABASE_NAME", "hotel_db")
