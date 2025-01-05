@@ -31,7 +31,6 @@ class OrderItem(BaseModel):
     takeaway: bool
 
 class Order(BaseModel):
-    order_id: str
     table: Optional[str]
     customer_name: Optional[str]
     phone_number: Optional[str]
@@ -63,12 +62,13 @@ def create_order(order: Order, user: dict = Depends(get_current_user)):
     return order_dict
 
 
+#order_id is mongodb collection _id field
 @order_router.get("/status/{order_id}")
 def get_order_status(order_id: str, user: dict = Depends(get_current_user)):
     """
     Get the status of a specific order.
     """
-    order = orders_collection.find_one({"order_id": order_id})
+    order = orders_collection.find_one({"_id": order_id})  # Assuming _id is a string
     if not order:
         raise HTTPException(status_code=404, detail="Order not found.")
     return {"order_id": order_id, "order_status": order["order_status"]}
@@ -79,7 +79,7 @@ def update_order(order_id: str, updated_items: List[OrderItem], user: dict = Dep
     """
     Update items in an existing order.
     """
-    order = orders_collection.find_one({"order_id": order_id})
+    order = orders_collection.find_one({"_id": order_id})
     if not order:
         raise HTTPException(status_code=404, detail="Order not found.")
     
@@ -95,7 +95,7 @@ def cancel_order(order_id: str, user: dict = Depends(get_current_user)):
     """
     Cancel an order. Cancellation is allowed only if the status is 'ordered'.
     """
-    order = orders_collection.find_one({"order_id": order_id})
+    order = orders_collection.find_one({"_id": order_id})
     if not order:
         raise HTTPException(status_code=404, detail="Order not found.")
     
@@ -117,7 +117,7 @@ def make_order_takeaway(order_id: str, user: dict = Depends(get_current_user)):
     """
     Convert a dine-in order to takeaway.
     """
-    order = orders_collection.find_one({"order_id": order_id})
+    order = orders_collection.find_one({"_id": order_id})
     if not order:
         raise HTTPException(status_code=404, detail="Order not found.")
     
@@ -155,7 +155,7 @@ def modify_order_items(
     Access is restricted to the same tab user or users with admin, waiter, or billing privileges.
     """
     # Fetch the existing order
-    order = orders_collection.find_one({"order_id": order_id})
+    order = orders_collection.find_one({"_id": order_id})
     if not order:
         raise HTTPException(status_code=404, detail="Order not found.")
     
@@ -212,7 +212,7 @@ def mark_items_takeaway(
     Marks specific items in the 'orders' field of an order as takeaway.
     """
     # Fetch the existing order
-    order = orders_collection.find_one({"order_id": order_id})
+    order = orders_collection.find_one({"_id": order_id})
     if not order:
         raise HTTPException(status_code=404, detail="Order not found.")
 
@@ -244,7 +244,7 @@ def set_billing_status(order_id: str, status: str, user: dict = Depends(get_curr
     Set the billing status of an order to the specified status.
     """
     # Fetch the existing order
-    order = orders_collection.find_one({"order_id": order_id})
+    order = orders_collection.find_one({"_id": order_id})
     if not order:
         raise HTTPException(status_code=404, detail="Order not found.")
 
