@@ -11,6 +11,9 @@ from jose import jwt, JWTError
 from dotenv import load_dotenv
 
 # MongoDB Configuration
+MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017/")
+DATABASE_NAME = os.getenv("DATABASE_NAME", "tabserv")
+COLLECTION_NAME = "user"
 MONGO_URL = os.getenv("MONGO_URL")
 DATABASE_NAME = os.getenv("DATABASE_NAME")
 COLLECTION_NAME = os.getenv("COLLECTION_NAME")
