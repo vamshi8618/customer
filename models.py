@@ -11,7 +11,9 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
-
+class UserLogin(BaseModel):
+    username: str
+    password: str
 class UserInDB(UserBase):
     hashed_password: str
     date_created: datetime

@@ -2,7 +2,7 @@
 import os
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from models import UserCreate, Token, UserBase, UserInDB
+from models import UserCreate, UserLogin, Token, UserBase, UserInDB
 from utilities import create_access_token, get_password_hash, verify_password
 from datetime import datetime, timedelta
 from pymongo import MongoClient
@@ -82,9 +82,9 @@ def register_user(user: UserCreate, admin_user: dict = Depends(admin_required)):
     return {"message": f"User {user.username} created successfully"}
 
 @user_router.post("/login", response_model=Token)
-def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = users_collection.find_one({"username": form_data.username})
-    if not user or not verify_password(form_data.password, user["hashed_password"]):
+def login_user(user_data: UserLogin):
+    user = users_collection.find_one({"username": user_data.username})
+    if not user or not verify_password(user_data.password, user["hashed_password"]):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials",
