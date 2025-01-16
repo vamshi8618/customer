@@ -14,9 +14,7 @@ from dotenv import load_dotenv
 MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017/")
 DATABASE_NAME = os.getenv("DATABASE_NAME", "tabserv")
 COLLECTION_NAME = "user"
-MONGO_URL = os.getenv("MONGO_URL")
-DATABASE_NAME = os.getenv("DATABASE_NAME")
-COLLECTION_NAME = os.getenv("COLLECTION_NAME")
+
 
 client = MongoClient(MONGO_URL)
 db = client[DATABASE_NAME]
