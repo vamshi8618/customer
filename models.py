@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # models.py
 from pydantic import BaseModel
 from datetime import datetime
@@ -25,3 +26,13 @@ class Token(BaseModel):
     access_token: str
     token_type: str
     
+=======
+from pydantic import BaseModel
+from typing import Optional
+
+class Item(BaseModel):
+    name: str
+    description: Optional[str] = None
+    price: float
+    quantity: int
+>>>>>>> 5645699 (first commit)
