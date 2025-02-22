@@ -1,40 +1,3 @@
-<<<<<<< HEAD
-# main.py
-from fastapi import FastAPI
-from router import user_router
-from routers.order import order_router
-from routers.tab_router import tab_router
-from dotenv import load_dotenv
-from fastapi.middleware.cors import CORSMiddleware
-
-# Load environment variables
-load_dotenv()
-
-# FastAPI instance
-app = FastAPI()
-# List of origins allowed to access your API
-origins = [
-    "http://localhost:8081",  # Example: React app running on localhost
-    "http://localhost:8080",  # Example: React app running on localhost
-    "http://localhost:3000",  # Example: React app running on localhost
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,  # Allows requests from specified origins
-    allow_credentials=True,  # Allows cookies to be sent along with requests
-    allow_methods=["*"],     # Allows all HTTP methods (GET, POST, etc.)
-    allow_headers=["*"],     # Allows all headers
-)
-# Include user routes
-app.include_router(user_router, prefix="/user", tags=["User Management"])
-app.include_router(order_router, prefix="/order", tags=["Order Management"])
-app.include_router(tab_router, prefix="/tabs", tags=["Tabs"])
-
-@app.get("/")
-def root():
-    return {"message": "Welcome Uniqtx!"}
-=======
 from fastapi import FastAPI, HTTPException, Body, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
@@ -43,8 +6,16 @@ from passlib.context import CryptContext
 import jwt
 import datetime
 import motor.motor_asyncio
+from dotenv import load_dotenv
+from fastapi.middleware.cors import CORSMiddleware
+from router import user_router
+from routers.order import order_router
+from routers.tab_router import tab_router
 
-# FastAPI App
+# Load environment variables
+load_dotenv()
+
+# FastAPI instance
 app = FastAPI()
 
 # MongoDB Connection
@@ -62,6 +33,21 @@ ALGORITHM = "HS256"
 
 # Token Authentication
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+# CORS Configuration
+origins = [
+    "http://localhost:8081",
+    "http://localhost:8080",
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # Allows requests from specified origins
+    allow_credentials=True,  # Allows cookies to be sent along with requests
+    allow_methods=["*"],  # Allows all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allows all headers
+)
 
 # Pydantic Models
 class Chef(BaseModel):
@@ -88,7 +74,7 @@ def create_access_token(username: str):
 # Root Route
 @app.get("/")
 async def root():
-    return {"message": "FastAPI Backend is Running!"}
+    return {"message": "Welcome to Uniqtx!"}
 
 # Signup Route (Register Chefs)
 @app.post("/signup")
@@ -126,4 +112,8 @@ async def protected_route(token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=401, detail="Token expired")
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid token")
->>>>>>> 5645699 (first commit)
+
+# Include user routes
+app.include_router(user_router, prefix="/user", tags=["User Management"])
+app.include_router(order_router, prefix="/order", tags=["Order Management"])
+app.include_router(tab_router, prefix="/tabs", tags=["Tabs"])
